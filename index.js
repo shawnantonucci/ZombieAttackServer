@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const passport = require("passport");
 
 const routes = require("./routes/main");
 const passwordRoutes = require("./routes/password");
+const secureRoutes = require("./routes/secure");
 
 // setup mongo connection
 const uri = process.env.MONGO_CONNECTION_URL;
@@ -45,6 +47,7 @@ require("./auth/auth");
 // setup routes
 app.use("/", routes);
 app.use("/", passwordRoutes);
+app.use("/", passport.authenticate("jwt", { session: false }), secureRoutes);
 
 // catch all other routes
 app.use((req, res) => {
@@ -58,8 +61,5 @@ app.use((error, req, res, next) => {
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("Connected to mongo");
-  app.listen(port, () => {
-    console.log(`Server is up on port: ${port}`);
-  });
+  app.listen(port, () => {});
 });
