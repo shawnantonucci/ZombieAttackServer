@@ -32,6 +32,8 @@ mongoose.connection.on("error", (error) => {
   process.exit(1);
 });
 
+mongoose.set("useFindAndModify", false);
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -61,8 +63,5 @@ app.use((error, req, res, next) => {
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("connected to mongo");
-  app.listen(port, () => {
-    console.log(`server is running on port: ${port}`);
-  });
+  app.listen(port, () => {});
 });
