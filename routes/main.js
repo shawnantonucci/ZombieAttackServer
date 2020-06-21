@@ -42,7 +42,7 @@ router.post("/login", async (req, res, next) => {
         };
 
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
-          expiresIn: 86400,
+          expiresIn: 300,
         });
         const refreshToken = jwt.sign(
           { user: body },
@@ -86,14 +86,23 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/token", (req, res) => {
-  if (!req.body || !req.body.refreshToken) {
-    res.status(400).json({ message: "invalid body", status: 400 });
-  } else {
-    const { refreshToken } = req.body;
-    res.status(200).json({
-      message: `refreshToken requested for token: ${refreshToken}`,
-      status: 200,
+  const { refreshToken } = req.body;
+  if (refreshToken in tokenList) {
+    const body = {
+      email: tokenList[refreshToken].email,
+      _id: tokenList[refreshToken]._id,
+      name: tokenList[refreshToken].name,
+    };
+    const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
+      expiresIn: 300,
     });
+
+    // update jwt
+    res.cookie("jwt", token);
+    tokenList[refreshToken].token = token;
+    res.status(200).json({ token, status: 200 });
+  } else {
+    res.status(401).json({ message: "unauthorized", status: 401 });
   }
 });
 
