@@ -46,6 +46,12 @@ app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
 // require passport auth
 require("./auth/auth");
 
+app.use(express.static(__dirname + "/public"));
+
+app.get("/", (req, res) => {
+  res.send(__dirname + "/index.html");
+});
+
 // setup routes
 app.use("/", routes);
 app.use("/", passwordRoutes);

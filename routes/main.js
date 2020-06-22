@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const tokenList = {};
 const router = express.Router();
 
-router.get("/", (request, response) => {
-  response.send("Hello world");
-});
+// router.get("/", (request, response) => {
+//   response.send("Hello world");
+// });
 
 router.get("/status", (req, res) => {
   res.status(200).json({ message: "ok", status: 200 });
