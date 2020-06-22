@@ -7,23 +7,16 @@ const crypto = require("crypto");
 const UserModel = require("../models/UserModel");
 
 const email = process.env.EMAIL;
-// const password = process.env.PASSWORD;
 
 const smtpTransport = nodemailer.createTransport({
   host: `smtp.${process.env.EMAIL_PROVIDER}.com`,
   secure: true,
-
-  // auth: {
-  //   user: email,
-  //   pass: password,
-  // },
   auth: {
     type: "OAuth2",
     user: email,
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    refreshToken:
-      "1//04MuyvLmnglJiCgYIARAAGAQSNwF-L9IrjvGDOKlzNbfvdgKw3h9quFHrd7EnWwbkvMuu1AyLGKKw24HxILlR5BuRFkYjgF1fnaM",
+    refreshToken: process.env.REFRESH_TOKEN,
   },
 });
 
@@ -122,7 +115,10 @@ router.post("/reset-password", async (req, res) => {
       name: user.username,
     },
   };
-  await smtpTransport.sendMail(emailOptions);
+  await smtpTransport.sendMail(emailOptions, function (error, res, done) {
+    try {
+    } catch (error) {}
+  });
   res.status(200).json({ message: "password updated", status: 200 });
 });
 
