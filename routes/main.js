@@ -38,7 +38,7 @@ router.post("/login", async (req, res, next) => {
         const body = {
           _id: user._id,
           email: user.email,
-          name: user.name,
+          name: user.username,
         };
 
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET, {
@@ -75,15 +75,21 @@ router.post("/login", async (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/logout", (req, res) => {
+const processLogoutRequest = (req, res) => {
   if (req.cookies) {
     const refreshToken = req.cookies.refreshJwt;
     if (refreshToken in tokenList) delete tokenList[refreshToken];
     res.clearCookie("jwt");
     res.clearCookie("refreshJwt");
   }
-  res.status(200).json({ message: "Logged out", status: 200 });
-});
+  if (req.method === "POST") {
+    res.status(200).json({ message: "Logged out post", status: 200 });
+  } else if (req.method === "GET") {
+    res.sendFile("logout.html", { root: "./public" });
+  }
+};
+
+router.route("/logout").get(processLogoutRequest).post(processLogoutRequest);
 
 router.post("/token", (req, res) => {
   const { refreshToken } = req.body;

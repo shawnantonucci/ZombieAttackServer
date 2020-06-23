@@ -46,6 +46,14 @@ app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
 // require passport auth
 require("./auth/auth");
 
+app.get(
+  "/game.html",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.status(200).json(req.user);
+  }
+);
+
 app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {

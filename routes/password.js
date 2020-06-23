@@ -61,7 +61,7 @@ router.post("/forgot-password", async (req, res) => {
     subject: "Zombie Attack password reset",
     context: {
       name: "Shawn",
-      url: `http://localhost:${process.env.PORT || 3000}?token=${token}`,
+      url: `http://localhost:${process.env.PORT || 3000}/reset-password.html?token=${token}`,
     },
   };
   await smtpTransport.sendMail(emailOptions, function (error, res, done) {
